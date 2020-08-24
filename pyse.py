@@ -4,7 +4,7 @@ from scipy.stats import sigmaclip
 from astropy.stats import sigma_clip
 from scipy.ndimage import label, generate_binary_structure
 
-input_fits = 'SOURCESINSERTED_10Jy.FITS'
+input_fits = 'SOURCESINSERTED_100Jy.FITS'
 hdulist=fits.open(input_fits)
 dimensions = (hdulist[0].header['NAXIS1'], hdulist[0].header['NAXIS2'])
 # print()
@@ -13,6 +13,8 @@ dimensions = (hdulist[0].header['NAXIS1'], hdulist[0].header['NAXIS2'])
 scidata=hdulist['PRIMARY'].data
 kappa = 3
 
+unclipped_std = np.std(scidata)
+unclipped_mean = np.mean(scidata)
 # clipped_data_around_mean, low_mean, upp_mean = sigmaclip(scidata, kappa, kappa)
 # mean_from_clipping_around_mean = clipped_data_around_mean.mean()
 # median_from_clipping_around_mean = np.med
@@ -21,6 +23,8 @@ clipped_data_around_median, low_median, upp_median = sigma_clip(scidata, sigma=k
 mean_from_clipping_around_median = clipped_data_around_median.mean()
 median_from_clipping_around_median = np.median(clipped_data_around_median)
 TKP_mode_estimator = 2.5*median_from_clipping_around_median-1.5*mean_from_clipping_around_median
+
+clipped_std = np.std(clipped_data_around_median)
 
 sci_clip = scidata >= 7.5782
 structure=generate_binary_structure(2,2)
