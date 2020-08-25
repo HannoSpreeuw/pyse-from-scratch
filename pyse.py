@@ -39,11 +39,10 @@ clipped_std = np.std(clipped_data_around_median)
 
 clip_limit=upp_median-median_from_clipping_around_median
 
-def find_true_variance(sigma):
+def find_true_std(sigma, clip_limit, clipped_std):
     help1=clip_limit/(sigma*np.sqrt(2))
     help2=np.sqrt(2*np.pi)*erf(help1)
     return sigma**2*(help2-2*np.sqrt(2)*help1*np.exp(-help1**2))-clipped_std**2*help2
 
-true_variance=fsolve(find_true_variance, clipped_std)[0]
-true_sigma=np.sqrt(true_variance)
+true_sigma=fsolve(find_true_std, clipped_std, args=(clip_limit,clipped_std))[0]
 print()
