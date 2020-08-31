@@ -3,7 +3,7 @@ from astropy.io import fits
 # from scipy.stats import sigmaclip
 from astropy.stats import sigma_clip
 from scipy.ndimage import label, generate_binary_structure
-from scipy.optimize import fsolve
+from scipy.optimize import fsolve, root_scalar
 from scipy.special import erf
 
 input_fits = 'SOURCESINSERTED_100Jy.FITS'
@@ -45,4 +45,34 @@ def find_true_std(sigma, clip_limit, clipped_std):
     return sigma**2*(help2-2*np.sqrt(2)*help1*np.exp(-help1**2))-clipped_std**2*help2
 
 true_sigma=fsolve(find_true_std, clipped_std, args=(clip_limit,clipped_std))[0]
+check=find_true_std(true_sigma, clip_limit, clipped_std)
+check_low=find_true_std(true_sigma*0.5, clip_limit, clipped_std)
+check_high=find_true_std(true_sigma*1.5, clip_limit, clipped_std)
+
+
+def var_helper(N, D, sigma_meas):
+    """Correct for the fact the rms noise is computed from a clipped
+    distribution.
+
+    That noise will always be lower than the noise from the complete
+    distribution.  The correction factor is a function of the computed
+    rms noise only.
+    """
+    term1 = np.sqrt(2. * np.pi) * erf(N / np.sqrt(2.))
+    term2 = 2. * N * np.exp(-N ** 2 / 2.)
+    return (sigma_meas**2*term1 / (term1 - term2))-(D/N)**2
+
+kappa = 1.5
+test_clipped_std = 19.560791551187116
+test_clip_limit = kappa*test_clipped_std
+test_sigma = fsolve(find_true_std, test_clipped_std, args=(test_clip_limit, test_clipped_std))[0]
+test=find_true_std(test_sigma, test_clip_limit, test_clipped_std)
+test_low=find_true_std(test_sigma*0.5, test_clip_limit, test_clipped_std)
+test_high=find_true_std(test_sigma*1.5, test_clip_limit, test_clipped_std)
+
+
+test=var_helper(test_N, test_clip_limit, test_clipped_std)
+test_low=var_helper(10, test_clip_limit, test_clipped_std)
+test_upp=var_helper(0.1, test_clip_limit, test_clipped_std)
+
 print()
