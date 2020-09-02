@@ -16,7 +16,7 @@ dimensions = (hdulist[0].header['NAXIS1'], hdulist[0].header['NAXIS2'])
 scidata=hdulist['PRIMARY'].data
 maximum = scidata.max()
 minimum = scidata.min()
-kappa = 1.5
+kappa = 2.0
 
 unclipped_std = np.std(scidata)
 unclipped_mean = np.mean(scidata)
@@ -38,7 +38,6 @@ clipped_std = np.std(clipped_data_around_median)
 # print("Number of islands = {0}".format(sci_num))
 
 clip_limit=upp_median-median_from_clipping_around_median
-clip_limit=kappa*clipped_std
 
 def find_true_std(sigma, clip_limit, clipped_std):
     help1=clip_limit/(sigma*np.sqrt(2))
