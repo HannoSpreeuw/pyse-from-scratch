@@ -38,6 +38,7 @@ clipped_std = np.std(clipped_data_around_median)
 # print("Number of islands = {0}".format(sci_num))
 
 clip_limit=upp_median-median_from_clipping_around_median
+clip_limit=kappa*clipped_std
 
 def find_true_std(sigma, clip_limit, clipped_std):
     help1=clip_limit/(sigma*np.sqrt(2))
@@ -62,17 +63,19 @@ def var_helper(N, D, sigma_meas):
     term2 = 2. * N * np.exp(-N ** 2 / 2.)
     return (sigma_meas**2*term1 / (term1 - term2))-(D/N)**2
 
-kappa = 1.5
+kappa = 1.98
 test_clipped_std = 19.560791551187116
+# test_clipped_std=0.7373492500752781
 test_clip_limit = kappa*test_clipped_std
+# test_clip_limit=1.460697620390798
 test_sigma = fsolve(find_true_std, test_clipped_std, args=(test_clip_limit, test_clipped_std))[0]
 test=find_true_std(test_sigma, test_clip_limit, test_clipped_std)
-test_low=find_true_std(test_sigma*0.5, test_clip_limit, test_clipped_std)
-test_high=find_true_std(test_sigma*1.5, test_clip_limit, test_clipped_std)
+test_low=find_true_std(test_clipped_std, test_clip_limit, test_clipped_std)
+test_high=find_true_std(test_clip_limit, test_clip_limit, test_clipped_std)
 
 
-test=var_helper(test_N, test_clip_limit, test_clipped_std)
-test_low=var_helper(10, test_clip_limit, test_clipped_std)
-test_upp=var_helper(0.1, test_clip_limit, test_clipped_std)
+# test=var_helper(test_N, test_clip_limit, test_clipped_std)
+# test_low=var_helper(10, test_clip_limit, test_clipped_std)
+# test_upp=var_helper(0.1, test_clip_limit, test_clipped_std)
 
 print()

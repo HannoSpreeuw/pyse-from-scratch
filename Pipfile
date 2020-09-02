@@ -12,6 +12,7 @@ scipy = "*"
 numpy = "*"
 cython = "*"
 cython-setuptools = "*"
+matplotlib = "*"
 
 [requires]
 python_version = "3.7"
