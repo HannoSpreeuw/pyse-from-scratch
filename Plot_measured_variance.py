@@ -3,9 +3,9 @@ import numpy as np
 import pylab as pyl
 from scipy.special import erf
 
-sigma=np.arange(1,100)
+sigma=np.arange(1,1000)
 true_sigma_measured=19.5608
-clip_limit=1.75*true_sigma_measured
+clip_limit=np.sqrt(3)*true_sigma_measured
 
 help1=clip_limit/(sigma*np.sqrt(2))
 help2=np.sqrt(2*np.pi)*erf(help1)
